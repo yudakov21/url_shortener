@@ -1,11 +1,12 @@
-from fastapi import FastAPI, Body, status, HTTPException
+from fastapi import FastAPI, status, HTTPException, Body, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from database import engine
 from models import Base
-from service import get_or_generate_short_url, get_url_by_slug
+from service import ShortenerService
 from exceptions import NotLongUrlException
+from dependencies import get_shortener_service
 
 
 @asynccontextmanager
@@ -29,14 +30,16 @@ app.add_middleware(
 
 
 @app.post("/")
-async def genarate_short_url(long_url: str = Body(embed=True)):
-    slug = await get_or_generate_short_url(long_url=long_url)
+async def genarate_short_url(long_url: str = Body(embed=True), 
+                             shortener_service: ShortenerService = Depends(get_shortener_service)):
+    slug = await shortener_service.get_or_generate_short_url(long_url=long_url)
     return {"data": slug}
 
 @app.get("/{slug}")
-async def redirect_to_long_url(slug: str):
+async def redirect_to_long_url(slug: str, 
+                               shortener_service: ShortenerService = Depends(get_shortener_service)):
     try:
-        long_url = await get_url_by_slug(slug)
+        long_url = await shortener_service.get_url_by_slug(slug)
     except NotLongUrlException:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Url was not found!!!")
     return RedirectResponse(url=long_url, status_code=status.HTTP_302_FOUND)
