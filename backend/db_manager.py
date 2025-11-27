@@ -7,7 +7,7 @@ class DatabaseManager:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def add_slug_to_db(self, slug: str, long_url:str):
+    async def add_slug_to_db(self, slug: str, long_url: str):
         new_slug = ShortURL(slug=slug, long_url=long_url)
         self.session.add(new_slug)
         await self.session.commit()
@@ -26,3 +26,11 @@ class DatabaseManager:
         row = result.scalar_one_or_none()
         
         return row.long_url if row else None
+
+
+    async def slug_exists(self, slug: str):
+        query = select(ShortURL).where(ShortURL.slug == slug)
+        result = await self.session.execute(query)
+        row = result.scalar_one_or_none()
+
+        return row is not None
