@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:15
+    container_name: url_db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - urlpgdata:/var/lib/postgresql/data
+    ports: 
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    container_name: url_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+    depends_on:
+      - db
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: url_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  urlpgdata:
+    
