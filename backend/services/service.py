@@ -2,9 +2,9 @@ from urllib.parse import urlparse
 from fastapi import HTTPException, status
 
 
-from shortener import generate_random_slug
-from db_manager import DatabaseManager
-from exceptions import NotLongUrlException
+from services.shortener import generate_random_slug
+from db.db_manager import DatabaseManager
+from core.exceptions import NotLongUrlException
 
 
 class ShortenerService:

@@ -1,4 +1,4 @@
-from models import ShortURL
+from db.models import ShortURL
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 

@@ -1,8 +1,8 @@
 from fastapi import Depends
-from database import get_async_session
+from db.database import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
-from db_manager import DatabaseManager
-from service import ShortenerService
+from db.db_manager import DatabaseManager
+from services.service import ShortenerService
 
 
 async def get_db_manager(session: AsyncSession = Depends(get_async_session)):

@@ -2,10 +2,10 @@ from fastapi import FastAPI, status, HTTPException, Body, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from database import engine
-from models import Base
-from service import ShortenerService
-from exceptions import NotLongUrlException
+from db.database import engine
+from db.models import Base
+from services.service import ShortenerService
+from core.exceptions import NotLongUrlException
 from dependencies import get_shortener_service
 
 
